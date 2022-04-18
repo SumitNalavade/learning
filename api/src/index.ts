@@ -19,13 +19,13 @@ app.get("/", (req, res, next) => {
     return res.send("Hello World");
 });
 
-//Read
+// Read
 app.get("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const todos = await Todo.find({});
     return res.send(todos)
 }));
 
-//Create
+// Create
 app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { name, description } = req.body;
     const newTodo = new Todo({name, description, complete: false});
@@ -34,7 +34,7 @@ app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunct
     return res.sendStatus(200);
 }));
 
-//Destroy
+// Destroy
 app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
@@ -43,7 +43,7 @@ app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: Nex
     res.sendStatus(200);
 }));
 
-//Update
+// Update
 app.patch("/todos/:id", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { name, description, complete } = req.body;

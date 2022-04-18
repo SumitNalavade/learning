@@ -28,25 +28,25 @@ app.listen(PORT, () => {
 app.get("/", (req, res, next) => {
     return res.send("Hello World");
 });
-//Read
+// Read
 app.get("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const todos = yield TodoModel_1.default.find({});
     return res.send(todos);
 })));
-//Create
+// Create
 app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description } = req.body;
     const newTodo = new TodoModel_1.default({ name, description, complete: false });
     yield newTodo.save();
     return res.sendStatus(200);
 })));
-//Destroy
+// Destroy
 app.delete("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     yield TodoModel_1.default.findByIdAndDelete(id);
     res.sendStatus(200);
 })));
-//Update
+// Update
 app.patch("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { name, description, complete } = req.body;
