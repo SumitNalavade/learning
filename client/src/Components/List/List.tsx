@@ -1,8 +1,18 @@
 import React from "react";
 
-const List: React.FC = () => {
+import TodoInterface from "../../Utils/TodoInterface";
+
+import ListEditable from "./ListComponent";
+
+interface Props {
+    todos: TodoInterface[]
+}
+
+const List: React.FC<Props> = ({ todos }) => {
     return (
-        <h1>Hello World</h1>
+        <div>
+            {todos.map((todo, index) => <ListEditable key={index} todo={todo} />)}
+        </div>
     )
 };
 
