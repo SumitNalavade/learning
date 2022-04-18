@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import { v4 as uuid } from "uuid";
 import catchAsync from "./Utils/catchAsync";
 
 const app = express();
@@ -22,13 +23,13 @@ app.get("/", (req, res, next) => {
 // Read
 app.get("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const todos = await Todo.find({});
-    return res.send(todos)
+    return res.send({"todos": todos})
 }));
 
 // Create
 app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { name, description } = req.body;
-    const newTodo = new Todo({name, description, complete: false});
+    const newTodo = new Todo({name, description, complete: false, id: uuid()});
     await newTodo.save();
 
     return res.sendStatus(200);
@@ -38,7 +39,7 @@ app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunct
 app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    await Todo.findByIdAndDelete(id);
+    await Todo.findOneAndDelete({id: id});
 
     res.sendStatus(200);
 }));

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const uuid_1 = require("uuid");
 const catchAsync_1 = __importDefault(require("./Utils/catchAsync"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 8080;
@@ -31,19 +32,19 @@ app.get("/", (req, res, next) => {
 // Read
 app.get("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const todos = yield TodoModel_1.default.find({});
-    return res.send(todos);
+    return res.send({ "todos": todos });
 })));
 // Create
 app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description } = req.body;
-    const newTodo = new TodoModel_1.default({ name, description, complete: false });
+    const newTodo = new TodoModel_1.default({ name, description, complete: false, id: (0, uuid_1.v4)() });
     yield newTodo.save();
     return res.sendStatus(200);
 })));
 // Destroy
 app.delete("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    yield TodoModel_1.default.findByIdAndDelete(id);
+    yield TodoModel_1.default.findOneAndDelete({ id: id });
     res.sendStatus(200);
 })));
 // Update

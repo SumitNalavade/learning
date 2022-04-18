@@ -1,15 +1,17 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, ObjectId } from "mongoose";
 
 interface TodoInterface {
     name: string
     description: string
     complete: boolean
+    id: string
 };
 
 const todoSchema = new Schema<TodoInterface>({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    complete: { type: Boolean, required: true }
+    complete: { type: Boolean, required: true },
+    id: { type: String, required: true }
 });
 
 
