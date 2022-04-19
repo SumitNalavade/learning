@@ -12,6 +12,7 @@ import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppC
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
+    //TODO: Figure out why optimistic updates is slow
     const deleteMutation = useMutation(deleteTodoAsync, {
         onMutate: async deleteTodo => {
             await queryClient.cancelQueries("todos");
@@ -19,7 +20,7 @@ const App: React.FC = ({ }) => {
             queryClient.setQueryData(todos, todos?.filter((todo) => todo != deleteTodo))
             return { previousTodos }
         },
-        onError: (err, newTodo, context) => {
+        onError: (err, newTodo, context: any) => {
             queryClient.setQueryData('todos', context?.previousTodos)
         },
         onSettled: () => {
@@ -31,10 +32,10 @@ const App: React.FC = ({ }) => {
         onMutate: async updateTodo => {
             await queryClient.cancelQueries("todos");
             const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
-            queryClient.setQueryData(todos, todos?.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo = updateTodo : console.log()))
+            queryClient.setQueryData(todos, todos?.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.complete = !todo.complete : console.log()))
             return { previousTodos }
         },
-        onError: (err, newTodo, context) => {
+        onError: (err, newTodo, context: any) => {
             queryClient.setQueryData('todos', context?.previousTodos)
         },
         onSettled: () => {

@@ -39,10 +39,10 @@ app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunct
 app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    await Todo.findOneAndDelete({id: id});
+    await Todo.findOneAndDelete({id});
     const todos = await Todo.find({});
 
-    res.status(200).send({todos: todos});
+    res.status(200).send({todos});
 }));
 
 // Update
@@ -50,14 +50,14 @@ app.patch("/todos/:id", catchAsync(async(req: Request, res: Response, next: Next
     const { id } = req.params;
     const { name, description, complete } = req.body;
 
-    await Todo.findOneAndUpdate({id: id}, { name, description, complete });
+    await Todo.findOneAndUpdate({id}, { name, description, complete });
     const todos = await Todo.find({});
 
-    res.status(200).send({todos: todos});
+    res.status(200).send({todos});
 }))
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack)
     res.status(500).send('Something broke!');
-    next();
+    next(err);
 });

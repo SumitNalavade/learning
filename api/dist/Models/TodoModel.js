@@ -4,7 +4,7 @@ const mongoose_1 = require("mongoose");
 ;
 const todoSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
     complete: { type: Boolean, required: true },
     id: { type: String, required: true }
 });

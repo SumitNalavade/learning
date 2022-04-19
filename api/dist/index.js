@@ -44,21 +44,21 @@ app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
 // Destroy
 app.delete("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    yield TodoModel_1.default.findOneAndDelete({ id: id });
+    yield TodoModel_1.default.findOneAndDelete({ id });
     const todos = yield TodoModel_1.default.find({});
-    res.status(200).send({ todos: todos });
+    res.status(200).send({ todos });
 })));
 // Update
 app.patch("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { name, description, complete } = req.body;
-    yield TodoModel_1.default.findOneAndUpdate({ id: id }, { name, description, complete });
+    yield TodoModel_1.default.findOneAndUpdate({ id }, { name, description, complete });
     const todos = yield TodoModel_1.default.find({});
-    res.status(200).send({ todos: todos });
+    res.status(200).send({ todos });
 })));
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
-    next();
+    next(err);
 });
 //# sourceMappingURL=index.js.map
