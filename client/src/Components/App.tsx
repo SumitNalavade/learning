@@ -12,12 +12,11 @@ import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppC
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
-    //TODO: Figure out why optimistic updates is slow
     const deleteMutation = useMutation(deleteTodoAsync, {
         onMutate: async deleteTodo => {
             await queryClient.cancelQueries("todos");
             const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
-            queryClient.setQueryData(todos, todos?.filter((todo) => todo != deleteTodo))
+            queryClient.setQueryData(todos, todos.map((todo: TodoInterface, index) => todo.id === deleteTodo.id ? todos.splice(index, 1) : console.log()))
             return { previousTodos }
         },
         onError: (err, newTodo, context: any) => {
