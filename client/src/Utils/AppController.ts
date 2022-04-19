@@ -13,4 +13,4 @@ export const deleteTodoAsync = async(todo: TodoInterface): Promise<TodoInterface
     const { id } = todo;
     const { data } = await axios.delete(`/todos/${id}`);
     return data.todos;
-}
+};

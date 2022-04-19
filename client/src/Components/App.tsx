@@ -6,12 +6,11 @@ import { queryClient } from "../Utils/QueryClient";
 import Header from "./Header/Header";
 import List from "./List/List";
 import { fetchTodosAsync, deleteTodoAsync } from "../Utils/AppController";
-import TodoInterface from "../Utils/TodoInterface";
 
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
-    const { mutate, isLoading: deleteTodoIsLoading, isError: deleteTodoIsError } = useMutation(deleteTodoAsync, {
+    const deleteMutation = useMutation(deleteTodoAsync, {
         onSuccess: data => {
         queryClient.invalidateQueries("todos");
         queryClient.setQueryData(todos, data)
@@ -28,7 +27,7 @@ const App: React.FC = ({ }) => {
                 <Spinner size="xl" style={{display: isLoading ? "flex" : "none" }} />
 
                 <Container size="lg" style={{height: "60%"}} >
-                    <List todos={todos} deleteTodo={{ deleteTodoMutation: (todo: TodoInterface) => mutate(todo) , deleteTodoIsLoading, deleteTodoIsError}} />
+                    <List todos={todos} deleteMutation={deleteMutation} />
                 </Container>
             </Container>
         </Container>
