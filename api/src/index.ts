@@ -40,8 +40,9 @@ app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: Nex
     const { id } = req.params;
 
     await Todo.findOneAndDelete({id: id});
+    const todos = await Todo.find({});
 
-    res.sendStatus(200);
+    res.status(200).send({todos: todos});
 }));
 
 // Update
@@ -49,9 +50,10 @@ app.patch("/todos/:id", catchAsync(async(req: Request, res: Response, next: Next
     const { id } = req.params;
     const { name, description, complete } = req.body;
 
-    await Todo.findByIdAndUpdate(id, { name, description, complete });
+    await Todo.findOneAndUpdate({id: id}, { name, description, complete });
+    const todos = await Todo.find({});
 
-    res.sendStatus(200);
+    res.status(200).send({todos: todos});
 }))
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

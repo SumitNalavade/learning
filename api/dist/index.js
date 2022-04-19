@@ -45,14 +45,16 @@ app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
 app.delete("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     yield TodoModel_1.default.findOneAndDelete({ id: id });
-    res.sendStatus(200);
+    const todos = yield TodoModel_1.default.find({});
+    res.status(200).send({ todos: todos });
 })));
 // Update
 app.patch("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { name, description, complete } = req.body;
-    yield TodoModel_1.default.findByIdAndUpdate(id, { name, description, complete });
-    res.sendStatus(200);
+    yield TodoModel_1.default.findOneAndUpdate({ id: id }, { name, description, complete });
+    const todos = yield TodoModel_1.default.find({});
+    res.status(200).send({ todos: todos });
 })));
 app.use((err, req, res, next) => {
     console.error(err.stack);

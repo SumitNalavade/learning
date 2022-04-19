@@ -1,17 +1,17 @@
 import React from "react";
 
 import TodoInterface from "../../Utils/TodoInterface";
-
-import ListEditable from "./ListComponent";
+import ListComponent from "./ListComponent";
 
 interface Props {
     todos: TodoInterface[]
+    deleteTodo: { deleteTodoMutation: (todo: TodoInterface) => unknown, deleteTodoIsLoading: boolean, deleteTodoIsError: boolean  }
 }
 
-const List: React.FC<Props> = ({ todos }) => {
+const List: React.FC<Props> = ({ todos, deleteTodo }) => {
     return (
         <div>
-            {todos.map((todo, index) => <ListEditable key={index} todo={todo} />)}
+            {todos.map((todo, index) => <ListComponent key={index} todo={todo} deleteTodo={deleteTodo} />)}
         </div>
     )
 };

@@ -1,6 +1,6 @@
 export default interface TodoInterface {
     name: string
-    desription: string
+    description: string
     complete: boolean
     id: string
 };
