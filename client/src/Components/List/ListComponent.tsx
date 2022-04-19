@@ -8,10 +8,20 @@ import TodoInterface from "../../Utils/TodoInterface";
 interface Props {
     todo: TodoInterface
     deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    updateMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
 }
 
-const ListEditable: React.FC<Props> = ({ todo, deleteMutation }) => {
+const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }) => {
     const { name, complete } = todo
+
+    const handleToggleComplete = () => {
+        const { name, description, complete, id } = todo
+        updateMutation.mutate({name, description, complete: !complete, id});
+    }
+
+    const handleDeleteTodo = () => {
+        deleteMutation.mutate(todo);
+    }
     
     if(complete) {
         return (
@@ -21,7 +31,7 @@ const ListEditable: React.FC<Props> = ({ todo, deleteMutation }) => {
                 </Tooltip>
     
                 <Tooltip label="Toggle complete">
-                    <IconButton mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
+                    <IconButton onClick={handleToggleComplete} mx={2} size='sm' icon={updateMutation.isLoading ? <Spinner color='gray' /> : <CheckIcon color="green" />} aria-label={""} />
                 </Tooltip>
                 <Tooltip label="Delete">
                     <IconButton mx={2} size='sm' icon={<CloseIcon color="red" />} aria-label={""} />
@@ -38,14 +48,14 @@ const ListEditable: React.FC<Props> = ({ todo, deleteMutation }) => {
             </Tooltip>
 
             <Tooltip label="Toggle complete">
-                <IconButton mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
+                <IconButton onClick={handleToggleComplete}  mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
             </Tooltip>
             <Tooltip label="Delete">
-                <IconButton onClick={() => deleteMutation.mutate(todo)} mx={2} size='sm' icon={deleteMutation.isLoading ? <Spinner color='red' /> : <CloseIcon color="red" />} aria-label={""} />
+                <IconButton onClick={handleDeleteTodo} mx={2} size='sm' icon={deleteMutation.isLoading ? <Spinner color='red' /> : <CloseIcon color="red" />} aria-label={""} />
             </Tooltip>
 
         </Container>
     )
 };
 
-export default ListEditable;
+export default ListComponent;

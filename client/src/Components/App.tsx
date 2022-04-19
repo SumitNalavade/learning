@@ -5,7 +5,7 @@ import { queryClient } from "../Utils/QueryClient";
 
 import Header from "./Header/Header";
 import List from "./List/List";
-import { fetchTodosAsync, deleteTodoAsync } from "../Utils/AppController";
+import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppController";
 
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
@@ -14,6 +14,13 @@ const App: React.FC = ({ }) => {
         onSuccess: data => {
         queryClient.invalidateQueries("todos");
         queryClient.setQueryData(todos, data)
+        }
+    });
+
+    const updateMutation = useMutation(updateTodoAsync, {
+        onSuccess: data => {
+            queryClient.invalidateQueries("todos");
+            queryClient.setQueryData(todos, data)
         }
     });
 
@@ -27,7 +34,7 @@ const App: React.FC = ({ }) => {
                 <Spinner size="xl" style={{display: isLoading ? "flex" : "none" }} />
 
                 <Container size="lg" style={{height: "60%"}} >
-                    <List todos={todos} deleteMutation={deleteMutation} />
+                    <List todos={todos} deleteMutation={deleteMutation} updateMutation={updateMutation} />
                 </Container>
             </Container>
         </Container>

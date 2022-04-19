@@ -4,7 +4,7 @@ interface TodoInterface {
     name: string
     description: string
     complete: boolean
-    id: string
+    readonly id: string
 };
 
 const todoSchema = new Schema<TodoInterface>({
