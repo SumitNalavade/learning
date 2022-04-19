@@ -12,6 +12,7 @@ import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppC
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
+    //Optimistcally delete a specific todo
     const deleteMutation = useMutation(deleteTodoAsync, {
         onMutate: async deleteTodo => {
             await queryClient.cancelQueries("todos");
@@ -27,6 +28,7 @@ const App: React.FC = ({ }) => {
         },
     });
 
+    //Optimistically flip a specific todos complete state
     const updateMutation = useMutation(updateTodoAsync, {
         onMutate: async updateTodo => {
             await queryClient.cancelQueries("todos");

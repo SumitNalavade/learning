@@ -1,5 +1,5 @@
-import React from "react";
-import { Container, Input, IconButton, Tooltip, Spinner } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Container, Input, IconButton, Tooltip } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { UseMutationResult } from "react-query";
 
@@ -14,23 +14,31 @@ interface Props {
 const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }) => {
     const { name, complete } = todo
 
+    const [inputValue, setInputValue] = useState<string>(""); 
+    
     const handleToggleComplete = () => {
         const { name, description, complete, id } = todo
-        updateMutation.mutate({name, description, complete: !complete, id});
+        updateMutation.mutate({name, description, complete: !complete, id})
     }
 
     const handleDeleteTodo = () => {
-        deleteMutation.mutate(todo);
+       deleteMutation.mutate(todo)
+    };
+
+    const handleSubmit = (evt: React.KeyboardEvent<HTMLInputElement>) => {
+        if(evt.key === "Enter") {
+            alert(inputValue);
+        }
     }
-    
+
     return (
         <Container mt={4} style={{width: "100%", display: "flex", alignItems: "center"}} >
             <Tooltip label="Edit todo" >
-                <Input value={name} style={{display: complete ? "none" : "flex"}} />
+                <Input onKeyDown={handleSubmit} onChange={(evt) => setInputValue(evt.target.value)} style={{display: complete ? "none" : "flex"}} />
             </Tooltip>
 
             <Tooltip label="Edit todo" >
-                    <Input value={name} isDisabled style={{display: complete ? "flex" : "none"}} />
+                <Input value={inputValue} isDisabled style={{display: complete ? "flex" : "none"}} />
             </Tooltip>
     
 
@@ -38,7 +46,7 @@ const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }
                 <IconButton onClick={handleToggleComplete}  mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
             </Tooltip>
             <Tooltip label="Delete">
-                <IconButton onClick={handleDeleteTodo} mx={2} size='sm' icon={deleteMutation.isLoading ? <Spinner color='red' /> : <CloseIcon color="red" />} aria-label={""} />
+                <IconButton onClick={handleDeleteTodo} mx={2} size='sm' icon={<CloseIcon color="red" />} aria-label={""} />
             </Tooltip>
 
         </Container>
