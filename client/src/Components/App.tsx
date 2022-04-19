@@ -5,24 +5,43 @@ import { queryClient } from "../Utils/QueryClient";
 
 import Header from "./Header/Header";
 import List from "./List/List";
+import TodoInterface from "../Utils/TodoInterface";
+
 import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppController";
 
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
     const deleteMutation = useMutation(deleteTodoAsync, {
-        onSuccess: data => {
-        queryClient.invalidateQueries("todos");
-        queryClient.setQueryData(todos, data)
-        }
+        onMutate: async deleteTodo => {
+            await queryClient.cancelQueries("todos");
+            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
+            queryClient.setQueryData(todos, todos?.filter((todo) => todo != deleteTodo))
+            return { previousTodos }
+        },
+        onError: (err, newTodo, context) => {
+            queryClient.setQueryData('todos', context?.previousTodos)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('todos')
+        },
     });
 
     const updateMutation = useMutation(updateTodoAsync, {
-        onSuccess: data => {
-            queryClient.invalidateQueries("todos");
-            queryClient.setQueryData(todos, data)
-        }
+        onMutate: async updateTodo => {
+            await queryClient.cancelQueries("todos");
+            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
+            queryClient.setQueryData(todos, todos?.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo = updateTodo : console.log()))
+            return { previousTodos }
+        },
+        onError: (err, newTodo, context) => {
+            queryClient.setQueryData('todos', context?.previousTodos)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('todos')
+        },
     });
+
 
     return (
         <Container bgGradient='linear(to-br, #feeaae, pink.500)' maxW="100vw" style={styles}>

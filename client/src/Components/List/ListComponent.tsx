@@ -23,29 +23,16 @@ const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }
         deleteMutation.mutate(todo);
     }
     
-    if(complete) {
-        return (
-            <Container mt={4} style={{width: "100%", display: "flex", alignItems: "center"}} >
-                <Tooltip label="Edit todo" >
-                    <Input value={name} isDisabled />
-                </Tooltip>
-    
-                <Tooltip label="Toggle complete">
-                    <IconButton onClick={handleToggleComplete} mx={2} size='sm' icon={updateMutation.isLoading ? <Spinner color='gray' /> : <CheckIcon color="green" />} aria-label={""} />
-                </Tooltip>
-                <Tooltip label="Delete">
-                    <IconButton mx={2} size='sm' icon={<CloseIcon color="red" />} aria-label={""} />
-                </Tooltip>
-    
-            </Container>
-        )
-    } 
-
     return (
         <Container mt={4} style={{width: "100%", display: "flex", alignItems: "center"}} >
             <Tooltip label="Edit todo" >
-                <Input value={name} />
+                <Input value={name} style={{display: complete ? "none" : "flex"}} />
             </Tooltip>
+
+            <Tooltip label="Edit todo" >
+                    <Input value={name} isDisabled style={{display: complete ? "flex" : "none"}} />
+            </Tooltip>
+    
 
             <Tooltip label="Toggle complete">
                 <IconButton onClick={handleToggleComplete}  mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
