@@ -32,7 +32,9 @@ app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunct
     const newTodo = new Todo({name, description, complete: false, id: uuid()});
     await newTodo.save();
 
-    return res.sendStatus(200);
+
+    const todos = await Todo.find({});
+    return res.status(200).send({todos})
 }));
 
 // Destroy

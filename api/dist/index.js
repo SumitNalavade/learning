@@ -39,7 +39,8 @@ app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
     const { name, description } = req.body;
     const newTodo = new TodoModel_1.default({ name, description, complete: false, id: (0, uuid_1.v4)() });
     yield newTodo.save();
-    return res.sendStatus(200);
+    const todos = yield TodoModel_1.default.find({});
+    return res.status(200).send({ todos });
 })));
 // Destroy
 app.delete("/todos/:id", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

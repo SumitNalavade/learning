@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Spinner } from "@chakra-ui/react";
 import { useQuery, useMutation } from "react-query";
 import { queryClient } from "../Utils/QueryClient";
 
 import Header from "./Header/Header";
 import List from "./List/List";
+import NewTodoInput from "./NewTodoInput/NewTodoInput";
 import TodoInterface from "../Utils/TodoInterface";
 
-import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync } from "../Utils/AppController";
+import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync, createNewTodoAsync } from "../Utils/AppController";
 
 const App: React.FC = ({ }) => {
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
@@ -29,7 +30,7 @@ const App: React.FC = ({ }) => {
     });
 
     //Optimistically flip a specific todos complete state
-    const updateMutation = useMutation(updateTodoAsync, {
+    const toggleCompleteMutation = useMutation(updateTodoAsync, {
         onMutate: async updateTodo => {
             await queryClient.cancelQueries("todos");
             const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
@@ -44,6 +45,38 @@ const App: React.FC = ({ }) => {
         },
     });
 
+    //Optimistically update a todo (Name & Description)
+    const updateTodoMutation = useMutation(updateTodoAsync, {
+        onMutate: async updateTodo => {
+            await queryClient.cancelQueries("todos");
+            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos");
+            todos.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.name = updateTodo.name : console.log());
+            todos.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.description = updateTodo.description : console.log());
+            return { previousTodos }
+        },
+        onError: (err, newTodo, context: any) => {
+            queryClient.setQueryData('todos', context?.previousTodos)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('todos')
+        },
+    });
+
+    //Optimistically create a new todo and add it to the todos array
+    const createNewTodoMutation = useMutation(createNewTodoAsync, {
+        onMutate: async newTodo => {
+            await queryClient.cancelQueries("todos");
+            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos");
+            todos.push(newTodo);
+            return { previousTodos }
+        },
+        onError: (err, newTodo, context: any) => {
+            queryClient.setQueryData('todos', context?.previousTodos)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('todos')
+        },
+    });
 
     return (
         <Container bgGradient='linear(to-br, #feeaae, pink.500)' maxW="100vw" style={styles}>
@@ -55,8 +88,10 @@ const App: React.FC = ({ }) => {
                 <Spinner size="xl" style={{display: isLoading ? "flex" : "none" }} />
 
                 <Container size="lg" style={{height: "60%"}} >
-                    <List todos={todos} deleteMutation={deleteMutation} updateMutation={updateMutation} />
+                    <List todos={todos} deleteMutation={deleteMutation} toggleCompleteMutation={toggleCompleteMutation} updateTodoMutation={updateTodoMutation} />
                 </Container>
+
+                <NewTodoInput createNewTodoMutation={createNewTodoMutation} />
             </Container>
         </Container>
     )

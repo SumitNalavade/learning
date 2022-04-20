@@ -8,17 +8,18 @@ import TodoInterface from "../../Utils/TodoInterface";
 interface Props {
     todo: TodoInterface
     deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
-    updateMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    toggleCompleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    updateTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
 }
 
-const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }) => {
+const ListComponent: React.FC<Props> = ({ todo, deleteMutation, toggleCompleteMutation, updateTodoMutation }) => {
     const { name, complete } = todo
 
-    const [inputValue, setInputValue] = useState<string>(""); 
+    const [inputValue, setInputValue] = useState<string>(todo.name); 
     
     const handleToggleComplete = () => {
         const { name, description, complete, id } = todo
-        updateMutation.mutate({name, description, complete: !complete, id})
+        toggleCompleteMutation.mutate({name, description, complete: !complete, id})
     }
 
     const handleDeleteTodo = () => {
@@ -27,14 +28,15 @@ const ListComponent: React.FC<Props> = ({ todo, deleteMutation, updateMutation }
 
     const handleSubmit = (evt: React.KeyboardEvent<HTMLInputElement>) => {
         if(evt.key === "Enter") {
-            alert(inputValue);
+            const { name, description, complete, id } = todo;
+            updateTodoMutation.mutate({name: inputValue, description, complete, id})
         }
     }
 
     return (
         <Container mt={4} style={{width: "100%", display: "flex", alignItems: "center"}} >
             <Tooltip label="Edit todo" >
-                <Input onKeyDown={handleSubmit} onChange={(evt) => setInputValue(evt.target.value)} style={{display: complete ? "none" : "flex"}} />
+                <Input onKeyDown={handleSubmit} value={inputValue}  onChange={(evt) => setInputValue(evt.target.value)} style={{display: complete ? "none" : "flex"}} />
             </Tooltip>
 
             <Tooltip label="Edit todo" >

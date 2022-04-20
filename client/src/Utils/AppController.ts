@@ -19,4 +19,9 @@ export const updateTodoAsync = async(todo: TodoInterface): Promise<TodoInterface
     const { id } = todo;
     const { data } = await axios.patch(`/todos/${id}`, { ...todo });
     return data.todos
+};
+
+export const createNewTodoAsync = async (todo: TodoInterface): Promise<TodoInterface[]> => {
+    const { data } = await axios.post("/todos", { ...todo });
+    return data.todo;
 }
