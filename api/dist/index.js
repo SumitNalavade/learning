@@ -37,8 +37,7 @@ app.get("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0
 // Create
 app.post("/todos", (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description } = req.body;
-    const newTodo = new TodoModel_1.default({ name, description, complete: false, id: (0, uuid_1.v4)() });
-    yield newTodo.save();
+    const newTodo = yield TodoModel_1.default.create({ name, description, complete: false, id: (0, uuid_1.v4)() });
     const todos = yield TodoModel_1.default.find({});
     return res.status(200).send({ todos });
 })));

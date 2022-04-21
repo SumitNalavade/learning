@@ -9,7 +9,7 @@ mongoose.connect("mongodb://localhost:27017/todo");
 
 app.use(express.json());
 
-import Todo from "./Models/TodoModel";
+import TodoModel, { TodoClass } from "./Models/TodoModel";
 
 app.listen(PORT, () => {
     // tslint:disable-next-line:no-console
@@ -22,18 +22,17 @@ app.get("/", (req, res, next) => {
 
 // Read
 app.get("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
-    const todos = await Todo.find({});
+    const todos: TodoClass[] = await TodoModel.find({});
     return res.send({"todos": todos})
 }));
 
 // Create
 app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { name, description } = req.body;
-    const newTodo = new Todo({name, description, complete: false, id: uuid()});
-    await newTodo.save();
 
+    const newTodo: TodoClass = await TodoModel.create({ name, description, complete: false, id: uuid() })
 
-    const todos = await Todo.find({});
+    const todos = await TodoModel.find({});
     return res.status(200).send({todos})
 }));
 
@@ -41,8 +40,8 @@ app.post("/todos", catchAsync(async(req: Request, res: Response, next: NextFunct
 app.delete("/todos/:id", catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    await Todo.findOneAndDelete({id});
-    const todos = await Todo.find({});
+    await TodoModel.findOneAndDelete({id});
+    const todos = await TodoModel.find({});
 
     res.status(200).send({todos});
 }));
@@ -52,8 +51,8 @@ app.patch("/todos/:id", catchAsync(async(req: Request, res: Response, next: Next
     const { id } = req.params;
     const { name, description, complete } = req.body;
 
-    await Todo.findOneAndUpdate({id}, { name, description, complete });
-    const todos = await Todo.find({});
+    await TodoModel.findOneAndUpdate({id}, { name, description, complete });
+    const todos = await TodoModel.find({});
 
     res.status(200).send({todos});
 }))

@@ -1,18 +1,17 @@
-import { Schema, model } from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 
-interface TodoInterface {
-    name: string
-    description?: string
-    complete: boolean
-    readonly id: string
-};
+export class TodoClass {
+    @prop({ required: true })
+    public name: string;
 
-const todoSchema = new Schema<TodoInterface>({
-    name: { type: String, required: true },
-    description: { type: String },
-    complete: { type: Boolean, required: true },
-    id: { type: String, required: true }
-});
+    @prop()
+    public description: string;
 
+    @prop({ required: true })
+    public complete: boolean;
 
-export default model<TodoInterface>("Todo", todoSchema);
+    @prop({ required: true })
+    public id: string
+}
+
+export default getModelForClass(TodoClass);
