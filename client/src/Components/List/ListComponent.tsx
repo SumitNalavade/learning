@@ -7,33 +7,36 @@ import TodoInterface from "../../Utils/TodoInterface";
 
 interface Props {
     todo: TodoInterface
-    deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
-    toggleCompleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
-    updateTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    mutations: {
+        deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        toggleCompleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        updateTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        createNewTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+    }
 }
 
-const ListComponent: React.FC<Props> = ({ todo, deleteMutation, toggleCompleteMutation, updateTodoMutation }) => {
+const ListComponent: React.FC<Props> = ({ todo, mutations }) => {
     const { name, complete } = todo
 
     const [inputValue, setInputValue] = useState<string>(todo.name);
     
     useEffect(() => {
         setInputValue(todo.name);
-    })
+    });
     
     const handleToggleComplete = () => {
         const { name, description, complete, id } = todo
-        toggleCompleteMutation.mutate({name, description, complete: !complete, id})
+        mutations.toggleCompleteMutation.mutate({name, description, complete: !complete, id})
     }
 
     const handleDeleteTodo = () => {
-       deleteMutation.mutate(todo)
+       mutations.deleteMutation.mutate(todo)
     };
 
     const handleSubmit = (evt: React.KeyboardEvent<HTMLInputElement>) => {
         if(evt.key === "Enter") {
             const { name, description, complete, id } = todo;
-            updateTodoMutation.mutate({name: inputValue, description, complete, id})
+            mutations.updateTodoMutation.mutate({name: inputValue, description, complete, id})
         }
     }
 

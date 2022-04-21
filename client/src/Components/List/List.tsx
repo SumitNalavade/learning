@@ -6,15 +6,18 @@ import ListComponent from "./ListComponent";
 
 interface Props {
     todos: TodoInterface[]
-    deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
-    toggleCompleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
-    updateTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    mutations: {
+        deleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        toggleCompleteMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        updateTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+        createNewTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
+    }
 }
 
-const List: React.FC<Props> = ({ todos, deleteMutation, toggleCompleteMutation, updateTodoMutation }) => {
+const List: React.FC<Props> = ({ todos, mutations }) => {
     return (
         <div>
-            {todos.map((todo, index) => <ListComponent key={index} todo={todo} deleteMutation={deleteMutation} toggleCompleteMutation={toggleCompleteMutation} updateTodoMutation={updateTodoMutation} />)}
+            {todos.map((todo, index) => <ListComponent key={index} todo={todo} mutations={mutations} />)}
         </div>
     )
 };

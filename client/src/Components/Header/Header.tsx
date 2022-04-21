@@ -9,7 +9,7 @@ const Header: React.FC = () => {
         <Container maxW="xs">
             <Image src={MERNLogo} objectFit="contain" />
         </Container>
-        <Text>MongoDB + Express + React + Node To Do</Text>
+        <Text>To-Do List</Text>
        </Container>
    )
 };

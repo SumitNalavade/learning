@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Container, Spinner } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Container, Spinner, Alert, AlertIcon, CloseButton } from "@chakra-ui/react";
 import { useQuery, useMutation } from "react-query";
 import { queryClient } from "../Utils/QueryClient";
 
@@ -9,74 +9,46 @@ import NewTodoInput from "./NewTodoInput/NewTodoInput";
 import TodoInterface from "../Utils/TodoInterface";
 
 import { fetchTodosAsync, deleteTodoAsync, updateTodoAsync, createNewTodoAsync } from "../Utils/AppController";
+import { onError, onSettled, onMutate } from "../Utils/OptimisticUpdatesSideEffectsHelper";
 
 const App: React.FC = ({ }) => {
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+
     const { isLoading, error, data: todos = [] } = useQuery("todos", fetchTodosAsync);
 
-    //Optimistcally delete a specific todo
-    const deleteMutation = useMutation(deleteTodoAsync, {
-        onMutate: async deleteTodo => {
-            await queryClient.cancelQueries("todos");
-            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
-            queryClient.setQueryData(todos, todos.map((todo: TodoInterface, index) => todo.id === deleteTodo.id ? todos.splice(index, 1) : console.log()))
-            return { previousTodos }
-        },
-        onError: (err, newTodo, context: any) => {
-            queryClient.setQueryData('todos', context?.previousTodos)
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries('todos')
-        },
-    });
+    if(error) {
+        setShowErrorAlert(true);
+    }
 
-    //Optimistically flip a specific todos complete state
-    const toggleCompleteMutation = useMutation(updateTodoAsync, {
-        onMutate: async updateTodo => {
-            await queryClient.cancelQueries("todos");
-            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos")
-            queryClient.setQueryData(todos, todos?.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.complete = !todo.complete : console.log()))
-            return { previousTodos }
-        },
-        onError: (err, newTodo, context: any) => {
-            queryClient.setQueryData('todos', context?.previousTodos)
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries('todos')
-        },
-    });
+    const mutations = {
+        //Optimistcally delete a specific todo
+        deleteMutation: useMutation(deleteTodoAsync, {
+            onMutate: deleteTodo => onMutate(deleteTodo, () => queryClient.setQueryData(todos, todos.map((todo: TodoInterface, index) => todo.id === deleteTodo.id ? todos.splice(index, 1) : console.log()))),
+            onError: (err, newTodo, context: any) => onError(context).then(() => setShowErrorAlert(true)),
+            onSettled: () => onSettled()
+        }),
 
-    //Optimistically update a todo (Name & Description)
-    const updateTodoMutation = useMutation(updateTodoAsync, {
-        onMutate: async updateTodo => {
-            await queryClient.cancelQueries("todos");
-            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos");
-            todos.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.name = updateTodo.name : console.log());
-            todos.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.description = updateTodo.description : console.log());
-            return { previousTodos }
-        },
-        onError: (err, newTodo, context: any) => {
-            queryClient.setQueryData('todos', context?.previousTodos)
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries('todos')
-        },
-    });
+        //Optimistically flip a specific todos complete state
+        toggleCompleteMutation: useMutation(updateTodoAsync, {
+            onMutate: updateTodo => onMutate(updateTodo, () => queryClient.setQueryData(todos, todos?.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.complete = !todo.complete : console.log()))),
+            onError: (err, newTodo, context: any) => onError(context).then(() => setShowErrorAlert(true)),
+            onSettled: () => onSettled()
+        }),
 
-    //Optimistically create a new todo and add it to the todos array
-    const createNewTodoMutation = useMutation(createNewTodoAsync, {
-        onMutate: async newTodo => {
-            await queryClient.cancelQueries("todos");
-            const previousTodos: TodoInterface[] | undefined = queryClient.getQueryData("todos");
-            todos.push(newTodo);
-            return { previousTodos }
-        },
-        onError: (err, newTodo, context: any) => {
-            queryClient.setQueryData('todos', context?.previousTodos)
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries('todos')
-        },
-    });
+        //Optimistically update a todo (Name & Description)
+        updateTodoMutation: useMutation(updateTodoAsync, {
+            onMutate: updateTodo => onMutate(updateTodo, () => todos.map((todo: TodoInterface) => todo.id === updateTodo.id ? todo.name = updateTodo.name : console.log())),
+            onError: (err, newTodo, context: any) => onError(context).then(() => setShowErrorAlert(true)),
+            onSettled: () => onSettled()
+        }),
+        
+        //Optimistically create a new todo and add it to the todos array
+        createNewTodoMutation: useMutation(createNewTodoAsync, {
+            onMutate: async newTodo => onMutate(newTodo, () => todos.push(newTodo)),
+            onError: (err, newTodo, context: any) => onError(context).then(() => setShowErrorAlert(true)),
+            onSettled: () => onSettled()
+        })
+    };
 
     return (
         <Container bgGradient='linear(to-br, #feeaae, pink.500)' maxW="100vw" style={styles}>
@@ -84,14 +56,20 @@ const App: React.FC = ({ }) => {
                 <Container style={{height: "30%"}} >
                     <Header />
                 </Container>
+                
+                <Alert status='error' style={{display: showErrorAlert ? "flex" : "none"}}>
+                    <AlertIcon />
+                    There was an error processing your request
+                    <CloseButton onClick={() => setShowErrorAlert(false)} position='absolute' right='8px' top='8px' />
+                </Alert>
 
                 <Spinner size="xl" style={{display: isLoading ? "flex" : "none" }} />
 
-                <Container size="lg" style={{height: "60%"}} >
-                    <List todos={todos} deleteMutation={deleteMutation} toggleCompleteMutation={toggleCompleteMutation} updateTodoMutation={updateTodoMutation} />
+                <Container size="lg" style={{height: "60%", overflowY: 'scroll', whiteSpace: "nowrap"}} >
+                    <List todos={todos} mutations={mutations} />
                 </Container>
 
-                <NewTodoInput createNewTodoMutation={createNewTodoMutation} />
+                <NewTodoInput createNewTodoMutation={mutations.createNewTodoMutation} />
             </Container>
         </Container>
     )

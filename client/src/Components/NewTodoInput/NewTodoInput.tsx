@@ -6,23 +6,26 @@ import { CheckIcon } from "@chakra-ui/icons";
 import TodoInterface from "../../Utils/TodoInterface";
 
 interface Props {
-    createNewTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, unknown>
+    createNewTodoMutation: UseMutationResult<TodoInterface[], unknown, TodoInterface, any>
 };
 
 const NewTodoInput: React.FC<Props> = ({ createNewTodoMutation }) => {
     const [inputValue, setInputValue] = useState<string>("");
 
-    const handleSubmit = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-        if(evt.key === "Enter") {
-            createNewTodoMutation.mutate({ name: inputValue, complete: false })
-        }
+    const handleSubmit = () => {
+        createNewTodoMutation.mutate({ name: inputValue, complete: false });
+        setInputValue("");
+    };
+
+    const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(evt.target.value);
     }
 
     return (
-        <InputGroup size="md" mb={12} style={{display: "flex", alignItems: "center"}} >
+        <InputGroup size="md" my={10} style={{display: "flex", alignItems: "center"}} >
             <InputLeftAddon children='I want to...' />
-            <Input value={inputValue} onKeyDown={handleSubmit} onChange={(evt) => setInputValue(evt.target.value)} placeholder='To-Do title' />
-            <IconButton onClick={() => createNewTodoMutation.mutate({ name: inputValue, complete: false })} mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
+            <Input value={inputValue} onKeyDown={(evt) => evt.key === "Enter" ? handleSubmit() : console.log() } onChange={handleChange} placeholder='To-Do title' />
+            <IconButton onClick={handleSubmit} mx={2} size='sm' icon={<CheckIcon color="green" />} aria-label={""} />
         </InputGroup>
     );
 };
