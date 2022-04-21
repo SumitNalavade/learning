@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Input, IconButton, Tooltip } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Container, IconButton, Tooltip, Input } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { UseMutationResult } from "react-query";
 
@@ -15,7 +15,11 @@ interface Props {
 const ListComponent: React.FC<Props> = ({ todo, deleteMutation, toggleCompleteMutation, updateTodoMutation }) => {
     const { name, complete } = todo
 
-    const [inputValue, setInputValue] = useState<string>(todo.name); 
+    const [inputValue, setInputValue] = useState<string>(todo.name);
+    
+    useEffect(() => {
+        setInputValue(todo.name);
+    })
     
     const handleToggleComplete = () => {
         const { name, description, complete, id } = todo
@@ -36,7 +40,7 @@ const ListComponent: React.FC<Props> = ({ todo, deleteMutation, toggleCompleteMu
     return (
         <Container mt={4} style={{width: "100%", display: "flex", alignItems: "center"}} >
             <Tooltip label="Edit todo" >
-                <Input onKeyDown={handleSubmit} value={inputValue}  onChange={(evt) => setInputValue(evt.target.value)} style={{display: complete ? "none" : "flex"}} />
+                <Input onKeyDown={handleSubmit} value={inputValue} onChange={(evt) => setInputValue(evt.target.value)} style={{display: complete ? "none" : "flex"}} />
             </Tooltip>
 
             <Tooltip label="Edit todo" >
