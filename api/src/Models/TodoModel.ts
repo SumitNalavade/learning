@@ -4,9 +4,6 @@ export class TodoClass {
     @prop({ required: true })
     public name: string;
 
-    @prop()
-    public description: string;
-
     @prop({ required: true })
     public complete: boolean;
 

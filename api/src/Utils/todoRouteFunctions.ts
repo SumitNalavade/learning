@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import catchAsync from "../Utils/catchAsync";
 
@@ -11,30 +11,30 @@ export default {
     }),
 
     createNewTodo: catchAsync(async(req: Request, res: Response, next: NextFunction) => {
-        const { name, description } = req.body;
-    
-        const newTodo: TodoClass = await TodoModel.create({ name, description, complete: false, id: uuid() })
-    
+        const { name } = req.body;
+
+        const newTodo: TodoClass = await TodoModel.create({ name, complete: false, id: uuid() })
+
         const todos = await TodoModel.find({});
         return res.status(200).send({todos})
     }),
 
     deleteTodo: catchAsync(async(req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-    
+
         await TodoModel.findOneAndDelete({id});
         const todos = await TodoModel.find({});
-    
+
         res.status(200).send({todos});
     }),
 
     updateTodo: catchAsync(async(req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        const { name, description, complete } = req.body;
-    
-        await TodoModel.findOneAndUpdate({id}, { name, description, complete });
+        const { name, complete } = req.body;
+
+        await TodoModel.findOneAndUpdate({id}, { name, complete });
         const todos = await TodoModel.find({});
-    
+
         res.status(200).send({todos});
     })
 }

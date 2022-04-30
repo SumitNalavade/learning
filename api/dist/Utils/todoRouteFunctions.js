@@ -21,8 +21,8 @@ exports.default = {
         return res.send({ "todos": todos });
     })),
     createNewTodo: (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        const { name, description } = req.body;
-        const newTodo = yield TodoModel_1.default.create({ name, description, complete: false, id: (0, uuid_1.v4)() });
+        const { name } = req.body;
+        const newTodo = yield TodoModel_1.default.create({ name, complete: false, id: (0, uuid_1.v4)() });
         const todos = yield TodoModel_1.default.find({});
         return res.status(200).send({ todos });
     })),
@@ -34,8 +34,8 @@ exports.default = {
     })),
     updateTodo: (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const { id } = req.params;
-        const { name, description, complete } = req.body;
-        yield TodoModel_1.default.findOneAndUpdate({ id }, { name, description, complete });
+        const { name, complete } = req.body;
+        yield TodoModel_1.default.findOneAndUpdate({ id }, { name, complete });
         const todos = yield TodoModel_1.default.find({});
         res.status(200).send({ todos });
     }))

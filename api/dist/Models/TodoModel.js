@@ -18,10 +18,6 @@ __decorate([
     __metadata("design:type", String)
 ], TodoClass.prototype, "name", void 0);
 __decorate([
-    (0, typegoose_1.prop)(),
-    __metadata("design:type", String)
-], TodoClass.prototype, "description", void 0);
-__decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Boolean)
 ], TodoClass.prototype, "complete", void 0);
