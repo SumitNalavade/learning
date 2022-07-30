@@ -5,9 +5,10 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 mongoose.connect("mongodb://localhost:27017/todo");
 
-app.use(express.json());
+import todoRouter from "./routes/todoRoutes";
 
-import TodoRouteFunctions from "./Utils/todoRouteFunctions";
+app.use(express.json());
+app.use("/todos", todoRouter);
 
 app.listen(PORT, () => {
     // tslint:disable-next-line:no-console
@@ -17,18 +18,6 @@ app.listen(PORT, () => {
 app.get("/", (req, res, next) => {
     return res.send("Hello World");
 });
-
-// Read
-app.get("/todos", TodoRouteFunctions.getAllTodos);
-
-// Create
-app.post("/todos", TodoRouteFunctions.createNewTodo);
-
-// Destroy
-app.delete("/todos/:id", TodoRouteFunctions.deleteTodo);
-
-// Update
-app.patch("/todos/:id", TodoRouteFunctions.updateTodo)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack)
