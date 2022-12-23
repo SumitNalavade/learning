@@ -4,17 +4,31 @@ import { GetServerSideProps } from "next";
 import { Button, Container, Flex, FormControl, FormLabel, Heading, Input, Text, IconButton } from "@chakra-ui/react";
 import Todo from "../components/todo";
 
-import supabase from "../lib/supabase";
+import useAppStore from "../stores/useAppStore";
 
 import TodoType from "../lib/todoSchema";
-import { readTodos } from "../lib/todoFunctions";
+import { readTodos, createTodo } from "../lib/todoFunctions";
+
+import supabase from "../lib/supabase";
 
 interface Props {
     data: TodoType[]
 }
 
 const Todos: React.FC<Props> = ({ data }) => {
+    const user = useAppStore((state) => state.user);
     const [todoName, setTodoName] = useState("");
+
+    const todos = supabase.channel('custom-all-channel')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'todos' },
+    (payload) => {
+      console.log('Change received!', payload)
+    }
+  )
+  .subscribe()
+
 
     return (
         <Container padding={12}>
@@ -34,6 +48,7 @@ const Todos: React.FC<Props> = ({ data }) => {
                         colorScheme='teal'
                         type='submit'
                         size={"sm"}
+                        onClick={() => createTodo(user!.id, todoName)}
                     >
                         Submit
                     </Button>

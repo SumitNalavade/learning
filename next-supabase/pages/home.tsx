@@ -9,6 +9,8 @@ import { readTodos, createTodo } from "../lib/todoFunctions";
 
 import useAppStore from "../stores/useAppStore";
 
+import supabase from "../lib/supabase";
+
 interface Props {
     data: TodoType[]
 }
@@ -16,6 +18,17 @@ interface Props {
 const Home: React.FC<Props> = ({ data }) => {
     const user = useAppStore((state) => state.user);
     const [todoName, setTodoName] = useState("");
+
+
+    const todos = supabase.channel('custom-insert-channel')
+    .on(
+    'postgres_changes', 
+    { event: 'INSERT', schema: 'public', table: 'todos' },
+    (payload) => {
+        console.log('Change received!', payload)
+    }
+    )
+    .subscribe()
 
     return (
         <Container padding={12}>
@@ -26,7 +39,7 @@ const Home: React.FC<Props> = ({ data }) => {
 
           <Container marginY={12} paddingY={6} border='1px' borderColor='gray.200' borderRadius='lg'>
             <FormControl>
-                <FormLabel color='blackAlpha.700'>Todo Name</FormLabel>
+                <FormLabel color='blackAlpha.700'>Name</FormLabel>
                 <Input value={todoName} onChange={(evt) => setTodoName(evt.target.value)} placeholder='Wash the dishes' />
 
                 <Flex justifyContent={'flex-end'}>
