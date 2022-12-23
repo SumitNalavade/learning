@@ -5,7 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import supabase from '../lib/supabase'
 
-import { useAppStore } from '../stores/useAppStore';
+import useAppStore from '../stores/useAppStore';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();

@@ -6,7 +6,9 @@ interface AppState {
     setUser: (user: User) => void
 }
 
-export const useAppStore = create<AppState>()((set) => ({
+const useAppStore = create<AppState>()((set) => ({
   user: null,
   setUser: (user) => set((state) => ({ user }))
 }));
+
+export default useAppStore;

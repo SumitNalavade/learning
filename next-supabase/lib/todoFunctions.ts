@@ -9,6 +9,16 @@ export const readTodos = async(userid: string) => {
     return data;
 }
 
+export const createTodo = async(userid: string, todoName: string) => {
+    const { data, error } = await supabase
+        .from('todos')
+        .insert([
+        { name: todoName, user_id: userid },
+    ]);
+
+    return data;
+}
+
 export const deleteTodo = async(todoid: string) => {
     const { data, error } = await supabase
     .from('todos')
