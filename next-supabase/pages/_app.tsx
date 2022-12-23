@@ -13,15 +13,16 @@ export default function App({ Component, pageProps }: AppProps) {
   const user = useAppStore((state) => state.user);
   const setUser = useAppStore((state) => state.setUser);
 
-  // supabase.auth.onAuthStateChange((event, session) => {
-  //   if(!user && session?.user) {
-  //     setUser(session.user);
+  supabase.auth.onAuthStateChange((event, session) => {
+    if(session) {
+      setUser(session!.user);
 
-  //     router.push(`/todos?userid=${session.user.id}`, {
-  //       query: user
-  //     });
-  //   } 
-  // });
+      router.push(`/todos?userid=${session!.user.id}`, {
+        // @ts-ignore
+        query: user
+      });
+    }
+  });
 
   return (
       <ChakraProvider>      

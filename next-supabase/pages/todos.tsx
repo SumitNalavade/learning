@@ -1,28 +1,20 @@
 import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 
-import { Box, Button, Container, Flex, FormControl, FormLabel, Heading, Input, Text } from "@chakra-ui/react";
+import { Button, Container, Flex, FormControl, FormLabel, Heading, Input, Text, IconButton } from "@chakra-ui/react";
+import Todo from "../components/todo";
 
 import supabase from "../lib/supabase";
 
+import TodoType from "../lib/todoSchema";
+import { readTodos } from "../lib/todoFunctions";
+
 interface Props {
-    data: any
+    data: TodoType[]
 }
 
 const Todos: React.FC<Props> = ({ data }) => {
     const [todoName, setTodoName] = useState("");
-
-
-    const insertTodo = async() => {
-        const { data, error } = await supabase
-        .from('todos')
-        .insert([
-          { name: todoName },
-        ])
-
-        console.log(data);
-        console.error(error)
-    }
 
     return (
         <Container padding={12}>
@@ -42,23 +34,32 @@ const Todos: React.FC<Props> = ({ data }) => {
                         colorScheme='teal'
                         type='submit'
                         size={"sm"}
-                        onClick={insertTodo}
                     >
                         Submit
                     </Button>
                 </Flex>
             </FormControl>
           </Container>
-          
+
+          <Container>
+            { data.map((todo: TodoType) => {
+                return (
+                    <Todo key={data.indexOf(todo)} todo={todo} />
+                )
+            }) }
+          </Container>
+
         </Container>
     )
 };
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     const { userid } = context.query;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { userid } = context.query;
 
-//     // Pass data to the page via props
-//     return { props: { data } }
-// }
+    const data = await readTodos(userid! as string);
+
+    // Pass data to the page via props
+    return { props: { data } }
+}
 
 export default Todos;
