@@ -20,16 +20,6 @@ const Home: React.FC<Props> = ({ data }) => {
     const [todoName, setTodoName] = useState("");
 
 
-    const todos = supabase.channel('custom-insert-channel')
-    .on(
-    'postgres_changes', 
-    { event: 'INSERT', schema: 'public', table: 'todos' },
-    (payload) => {
-        console.log('Change received!', payload)
-    }
-    )
-    .subscribe()
-
     return (
         <Container padding={12}>
           <Container centerContent>
