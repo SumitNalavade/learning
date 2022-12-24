@@ -10,6 +10,9 @@ export const readTodos = async(userid: string) => {
 }
 
 export const createTodo = async(userid: string, todoName: string) => {
+    throw new Error();
+
+
     const { data, error } = await supabase
         .from('todos')
         .insert([
@@ -26,4 +29,13 @@ export const deleteTodo = async(todoid: string) => {
     .eq('id', todoid)
 
     return data
+}
+
+export const flipTodoStatus = async (todoid: string, currStatus: boolean) => {
+    const { data, error } = await supabase
+        .from('todos')
+        .update({ complete: !currStatus })
+        .eq('id', todoid)
+
+    return data;
 }

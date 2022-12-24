@@ -41,15 +41,19 @@ export default function App({ Component, pageProps }: AppProps) {
   (payload) => {
       const { eventType } = payload
 
+      const myTodos = [...todos]
+
       switch(eventType)  {
-        case "INSERT":
-          const myTodos = [...todos]
+        case "INSERT": 
           myTodos.push(payload.new as Todo);
           setTodos(myTodos);
           break;
         case "DELETE":
           setTodos(todos.filter((todo) => todo.id != payload.old.id));
           break;
+        case "UPDATE":
+          myTodos.forEach((todo) => todo.id === payload.new.id ? todo.complete = !todo.complete : "")
+          setTodos(myTodos);
       } 
   }
   )
