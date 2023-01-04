@@ -9,11 +9,11 @@ class Project {
 
     @Field()
     @Prop({ required: true })
-    name: string
+    name: String
 
     @Field()
     @Prop({ required: true })
-    description: string
+    description: String
 
     @Field({ nullable: true, defaultValue: false })
     @Prop()
@@ -21,7 +21,7 @@ class Project {
 
     @Field(type => ID)
     @Prop({ required: true })
-    clientId: string
+    clientId: String
 }
 
 export default Project

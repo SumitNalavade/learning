@@ -56,7 +56,7 @@ class ProjectResolver {
 
   @FieldResolver((returns) => Client)
   async client(@Root() project: Project) {
-    return ClientModel.findOne({ id: project.clientId })
+    return ClientModel.findOne({ _id: project.clientId })
   }
 
   @Mutation((returns) => Project)

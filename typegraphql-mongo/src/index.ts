@@ -5,6 +5,8 @@ import * as dotenv from "dotenv"
 dotenv.config()
 import "reflect-metadata";
 
+import { TypegooseMiddleware } from "./utils/typegoose-middleware";
+
 import ClientResolver from "./resolvers/clientResolver";
 import ProjectResolver from "./resolvers/projectResolver";
 
@@ -13,7 +15,8 @@ const PORT = process.env.PORT || 5000;
 async function main() {
     const schema = await buildSchema({
         resolvers: [ClientResolver, ProjectResolver],
-        validate: { forbidUnknownValues: false }
+        validate: { forbidUnknownValues: false },
+        globalMiddlewares: [TypegooseMiddleware]
     });
 
     const server = new ApolloServer({

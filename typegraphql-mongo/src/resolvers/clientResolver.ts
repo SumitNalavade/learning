@@ -47,6 +47,11 @@ class ClientResolver {
   async clients() {
     return await ClientModel.find()
   }
+
+  @FieldResolver(returns => [Project])
+  async projects(@Root() client: Client) {
+    return ProjectModel.find({ clientId: client._id });
+  }
   
   @Mutation((returns) => Client)
   async addClient(@Arg("data") addClientData: AddClientInput) {

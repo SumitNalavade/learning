@@ -80,9 +80,7 @@ let ClientResolver = class ClientResolver {
         return await clientSchema_1.ClientModel.find();
     }
     async projects(client) {
-        const foundClient = (await clientSchema_1.ClientModel.findOne(client)).toObject();
-        console.log(foundClient._id.toString());
-        return await projectSchema_1.ProjectModel.find({ clientId: foundClient._id.toString() });
+        return projectSchema_1.ProjectModel.find({ clientId: client._id });
     }
     async addClient(addClientData) {
         const { name, email, phone } = addClientData;

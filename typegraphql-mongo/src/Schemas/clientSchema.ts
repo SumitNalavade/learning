@@ -9,15 +9,15 @@ class Client {
 
     @Field()
     @Prop({ required: true })
-    name: string
+    name: String
 
     @Field()
     @Prop({ require: true })
-    email: string
+    email: String
 
     @Field()
     @Prop({ required: true })
-    phone: string
+    phone: String
 }
 
 export default Client

@@ -32,13 +32,15 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 require("reflect-metadata");
+const typegoose_middleware_1 = require("./utils/typegoose-middleware");
 const clientResolver_1 = __importDefault(require("./resolvers/clientResolver"));
 const projectResolver_1 = __importDefault(require("./resolvers/projectResolver"));
 const PORT = process.env.PORT || 5000;
 async function main() {
     const schema = await (0, type_graphql_1.buildSchema)({
         resolvers: [clientResolver_1.default, projectResolver_1.default],
-        validate: { forbidUnknownValues: false }
+        validate: { forbidUnknownValues: false },
+        globalMiddlewares: [typegoose_middleware_1.TypegooseMiddleware]
     });
     const server = new apollo_server_1.ApolloServer({
         schema,

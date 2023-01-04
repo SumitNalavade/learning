@@ -88,7 +88,7 @@ let ProjectResolver = class ProjectResolver {
         return projectSchema_1.ProjectModel.find();
     }
     async client(project) {
-        return clientSchema_1.ClientModel.findOne({ id: project.clientId });
+        return clientSchema_1.ClientModel.findOne({ _id: project.clientId });
     }
     async addProject(addProjectData) {
         const newProject = await projectSchema_1.ProjectModel.create(addProjectData);
