@@ -1,0 +1,26 @@
+{
+  "name": "typegraphql-mongo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/bin/www.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@typegoose/typegoose": "^10.0.0",
+    "@types/node": "^18.11.18",
+    "apollo-server": "^3.11.1",
+    "class-validator": "^0.14.0",
+    "dotenv": "^16.0.3",
+    "graphql": "15.8.0",
+    "mongoose": "^6.8.2",
+    "nodemon": "^2.0.20",
+    "reflect-metadata": "^0.1.13",
+    "tsc-watch": "^6.0.0",
+    "type-graphql": "^1.1.1",
+    "typescript": "^4.9.4"
+  }
+}
